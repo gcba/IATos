@@ -1,0 +1,21 @@
+cleansing:
+  preemphasis_coef: 0.97
+segmentation:
+  envelope_size: 0.05
+  detection_threshold: 1.5
+  validation_time: 0.125
+  validation_threshold: 6
+  sample_rate: 22050
+  min_segment_length: 0.1
+mel_spec:
+  sr: 22050
+  n_fft: 2048
+  hop_length: 380
+  n_mels: 480
+  fmin: 0
+  fmax: null
+  ref: "max"
+  T: true
+  as_ratio: true
+color_spec:
+  cmap: viridis

@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Tos.IA API
+  description: infer convid diagnostic from caugh audio data
+  version: 1.0.0
+
+servers:
+- url: /v1
+  description: v1 server
+
+security:
+- ApiKeyAuth: []
+
+paths:
+  /diagnose:
+    post:
+      summary: Executes inference over an audio file and returns a diagnostic
+      operationId: diagnose_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiagnoseRequest'
+        required: true
+      responses:
+        "200":
+          description: The result of a diagnostic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnoseResponse'
+        "400":
+          description: The request is invalid
+          content:
+            applicaiton/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "401":
+          description: API key is missing or invalid
+        default:
+          description: Unexpected error
+      x-openapi-router-controller: server.diagnose
+components:
+  schemas:
+    DiagnoseResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+        score:
+          type: number
+        isPositive:
+          type: boolean
+      example:
+        score: 0.8
+        requestId: xxxx-22929-bbbb
+        isPositive: true
+    DiagnoseRequest:
+      type: object
+      properties:
+        audioUrl:
+          type: string
+        userData:
+          type: object
+    inline_response_400:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-KEY
+      in: header
+      x-apikeyInfoFunc: server.auth.check_apikey
+

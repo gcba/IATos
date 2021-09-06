@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  labels:
+    app: api-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+      - name: main
+        args: ["-m", "server"]
+        image: tosia.azurecr.io/tosia-api:${BUILD_NUMBER}
+        resources:
+          requests:
+            cpu: 250m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: credentials
+              key: API_KEY
+        - name: BLOB_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              name: credentials
+              key: BLOB_CONNECTION
+        - name: BLOB_CONTAINER
+          valueFrom:
+            secretKeyRef:
+              name: credentials
+              key: BLOB_CONTAINER
+        - name: COSMO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: credentials
+              key: COSMO_ENDPOINT
+        - name: COSMO_KEY
+          valueFrom:
+            secretKeyRef:
+              name: credentials
+              key: COSMO_KEY
+        ports:
+        - containerPort: 8080
